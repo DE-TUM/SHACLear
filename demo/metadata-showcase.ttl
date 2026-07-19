@@ -1,0 +1,80 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#test commit
+
+#
+# METADATA SHOWCASE
+# Contains every predicate that the parser is supposed to FILTER OUT
+# (rdfs:label, rdfs:comment, sh:name, sh:description, sh:message,
+#  sh:order, sh:severity, sh:group, sh:deactivated).
+# After parsing, only the REAL validation constraints should remain.
+#
+
+ex:UserProfileShape
+    a sh:NodeShape ;
+    sh:targetClass ex:UserProfile ;
+
+    # ── Shape-level metadata (ALL ignored by the parser) ──
+    rdfs:label       "User Profile Validation" ;
+    rdfs:comment     "Defines the structural constraints for user profiles." ;
+    sh:name          "User Profile Constraints" ;
+    sh:description   "Comprehensive validation for user profile entities." ;
+    sh:severity      sh:Violation ;
+    sh:message       "User profile validation failed." ;
+    sh:deactivated   false ;
+
+    # ── Real validation: every property mixes metadata + real rules ──
+    sh:property [
+        sh:path ex:username ;
+
+        # Metadata — ignored
+        rdfs:label     "Username field" ;
+        sh:name        "Username" ;
+        sh:description "The unique handle for this user." ;
+        sh:message     "Username must be 3–20 alphanumeric characters." ;
+        sh:order       1 ;
+        sh:group       ex:IdentityGroup ;
+        sh:severity    sh:Violation ;
+
+        # Real validation rules
+        sh:datatype  xsd:string ;
+        sh:minLength 3 ;
+        sh:maxLength 20 ;
+        sh:pattern   "^[a-zA-Z0-9_]+$" ;
+        sh:minCount  1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:email ;
+
+        # Metadata
+        sh:name        "Email Address" ;
+        sh:description "Primary contact email." ;
+        sh:order       2 ;
+        sh:group       ex:ContactGroup ;
+
+        # Real validation
+        sh:datatype xsd:string ;
+        sh:pattern  "^[^@]+@[^@]+\\.[^@]+$" ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:age ;
+
+        # Metadata
+        rdfs:label     "Age" ;
+        rdfs:comment   "User age in full years." ;
+        sh:name        "Age" ;
+        sh:order       3 ;
+        sh:deactivated false ;
+        sh:message     "Age must be at least 13." ;
+
+        # Real validation
+        sh:datatype     xsd:integer ;
+        sh:minInclusive 13 ;
+        sh:maxInclusive 130 ;
+    ] .

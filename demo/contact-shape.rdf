@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample SHACL shape in RDF/XML format
+  Demonstrates: the backend converts RDF/XML → Turtle on upload.
+  After upload, the editor below the file card will show the
+  converted Turtle version of this exact same shape.
+-->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:sh="http://www.w3.org/ns/shacl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ex="http://example.org/">
+
+  <sh:NodeShape rdf:about="http://example.org/ContactShape">
+    <sh:targetClass rdf:resource="http://example.org/Contact"/>
+    <rdfs:label>Contact Validation</rdfs:label>
+    <sh:description>Constraints for contact records in the address book.</sh:description>
+
+    <sh:property>
+      <sh:PropertyShape>
+        <sh:path rdf:resource="http://example.org/firstName"/>
+        <sh:name>First Name</sh:name>
+        <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <sh:minCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minCount>
+        <sh:maxCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:maxCount>
+        <sh:minLength rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minLength>
+      </sh:PropertyShape>
+    </sh:property>
+
+    <sh:property>
+      <sh:PropertyShape>
+        <sh:path rdf:resource="http://example.org/lastName"/>
+        <sh:name>Last Name</sh:name>
+        <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <sh:minCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minCount>
+      </sh:PropertyShape>
+    </sh:property>
+
+    <sh:property>
+      <sh:PropertyShape>
+        <sh:path rdf:resource="http://example.org/email"/>
+        <sh:name>Email Address</sh:name>
+        <sh:description>Primary email address of the contact.</sh:description>
+        <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <sh:pattern>^[^@]+@[^@]+\.[^@]+$</sh:pattern>
+        <sh:minCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</sh:minCount>
+      </sh:PropertyShape>
+    </sh:property>
+
+    <sh:property>
+      <sh:PropertyShape>
+        <sh:path rdf:resource="http://example.org/phone"/>
+        <sh:name>Phone Number</sh:name>
+        <sh:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <sh:pattern>^\+?[0-9 \-]{7,}$</sh:pattern>
+      </sh:PropertyShape>
+    </sh:property>
+
+    <sh:property>
+      <sh:PropertyShape>
+        <sh:path rdf:resource="http://example.org/preferredContact"/>
+        <sh:name>Preferred Contact Method</sh:name>
+        <sh:in rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://example.org/Email"/>
+          <rdf:Description rdf:about="http://example.org/Phone"/>
+          <rdf:Description rdf:about="http://example.org/Sms"/>
+        </sh:in>
+      </sh:PropertyShape>
+    </sh:property>
+
+  </sh:NodeShape>
+</rdf:RDF>

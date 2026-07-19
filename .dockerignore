@@ -1,0 +1,31 @@
+# Version control
+.git
+.gitignore
+
+# Python
+**/__pycache__
+**/*.pyc
+.venv
+venv
+
+# Node
+**/node_modules
+frontend/dist
+
+# Env files (never bake secrets into the image)
+.env
+.env.*
+backend/.env
+frontend/.env
+!*.env.example
+
+# Evaluation artifacts (large, not needed to run the app)
+evaluation/results
+evaluation/results-size-comparison
+
+# Tests / docs / misc
+tests
+docs
+assets
+# NOTE: root README.md is intentionally NOT excluded here - pyproject.toml
+# references it (readme = "README.md") and the Dockerfile COPYs it explicitly.

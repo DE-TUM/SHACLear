@@ -1,0 +1,73 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#
+# Employee shape – showcases:
+#   • sh:closed (no extra properties allowed)
+#   • sh:or (alternative constraints)
+#   • sh:node reference to another shape
+#   • sh:qualifiedValueShape + sh:qualifiedMinCount
+#   • inverse path (^sh:path)
+#
+
+ex:EmployeeShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Employee ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdfs:label rdfs:comment ) ;
+
+    sh:property [
+        sh:path ex:firstName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:lastName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:age ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 18 ;
+        sh:maxInclusive 70 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:contact ;
+        sh:or (
+            [ sh:datatype xsd:string ; sh:pattern "^[^@]+@[^@]+\\.[^@]+$" ]
+            [ sh:datatype xsd:string ; sh:pattern "^\\+?[0-9 -]{7,}$" ]
+        ) ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:worksIn ;
+        sh:node ex:DepartmentShape ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:supervises ;
+        sh:qualifiedValueShape [ sh:class ex:Employee ] ;
+        sh:qualifiedMinCount 0 ;
+    ] .
+
+
+ex:DepartmentShape
+    a sh:NodeShape ;
+    sh:property [
+        sh:path ex:name ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:budget ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+    ] .

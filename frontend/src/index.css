@@ -1,0 +1,358 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-zinc-50 text-zinc-900;
+  }
+  html.dark body {
+    @apply text-zinc-100;
+    background-color: #0a0b10;
+  }
+
+  /* Page shell: layered brand glow + dotted texture, tuned per theme. */
+  .app-shell {
+    background-color: #fafbff;
+    background-image:
+      radial-gradient(1000px circle at 50% -15%, rgba(59, 91, 219, 0.10), transparent 60%),
+      radial-gradient(680px circle at 100% 0%, rgba(99, 102, 241, 0.07), transparent 55%),
+      radial-gradient(720px circle at 0% 8%, rgba(56, 189, 248, 0.05), transparent 55%),
+      radial-gradient(circle, rgba(24, 24, 27, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 22px 22px;
+    background-attachment: fixed, fixed, fixed, scroll;
+  }
+  html.dark .app-shell {
+    background-color: #0a0b10;
+    background-image:
+      radial-gradient(900px circle at 50% -12%, rgba(59, 91, 219, 0.18), transparent 60%),
+      radial-gradient(620px circle at 100% 2%, rgba(99, 102, 241, 0.10), transparent 52%),
+      radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 22px 22px;
+    background-attachment: fixed, fixed, scroll;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+  html.dark ::selection {
+    @apply bg-brand-700 text-brand-50;
+  }
+}
+
+/* Light-mode card lift — soft, faintly brand-tinted elevation that gives the
+   light surfaces real depth on the new ambient background. Dark mode draws its
+   depth from the glow instead, so this is scoped to light only. Lives in the
+   utilities layer so it overrides Tailwind's `shadow-sm` / `hover:shadow-md`. */
+@layer utilities {
+  html:not(.dark) .card-lift {
+    box-shadow:
+      0 1px 2px rgba(24, 24, 27, 0.04),
+      0 10px 26px -12px rgba(59, 91, 219, 0.16);
+  }
+  html:not(.dark) .card-lift-hover:hover {
+    box-shadow:
+      0 2px 6px rgba(24, 24, 27, 0.06),
+      0 16px 32px -12px rgba(59, 91, 219, 0.22);
+  }
+}
+
+@layer components {
+  /* Markdown content inside ExplanationBox */
+  .explanation-body p { @apply mb-2 last:mb-0; }
+  .explanation-body ul,
+  .explanation-body ol { @apply my-2 pl-6; }
+  .explanation-body ul { list-style: disc; }
+  .explanation-body ol { list-style: decimal; }
+  .explanation-body li { @apply mb-1; display: list-item; }
+  .explanation-body strong { @apply font-bold; }
+  .explanation-body em { @apply italic; }
+  .explanation-body code {
+    @apply rounded bg-zinc-100 px-1.5 py-0.5 text-[0.85em] font-mono;
+  }
+  html.dark .explanation-body code {
+    @apply bg-zinc-800 text-zinc-100;
+  }
+  .explanation-body h1,
+  .explanation-body h2,
+  .explanation-body h3 { @apply font-semibold mt-3 mb-1; }
+
+  /* ── Bidirectional hover-to-link ──────────────────────────────── */
+  /* Output paragraphs that can be hovered to highlight matching code */
+  .explanation-body .ref-section {
+    @apply rounded-md -mx-2 px-2 py-0.5 cursor-pointer transition-colors;
+  }
+  .explanation-body .ref-section:hover {
+    @apply bg-brand-50 dark:bg-brand-900/30;
+  }
+
+  /* Reference-marker HTML comments inside the markdown editor — dim them
+     so they don't distract while editing, but keep them visible enough
+     to survive a copy/paste round-trip to the LLM. */
+  .cm-ref-comment {
+    color: #a1a1aa;   /* zinc-400 */
+    opacity: 0.55;
+  }
+  html.dark .cm-ref-comment {
+    color: #71717a;   /* zinc-500 */
+  }
+
+  /* Lines in the Turtle editor highlighted by a hovered explanation paragraph */
+  .cm-hover-highlight {
+    background-color: rgba(59, 91, 219, 0.12);   /* brand @ 12% */
+    box-shadow: inset 3px 0 0 0 rgb(59, 91, 219);
+    transition: background-color 80ms ease-out;
+  }
+  html.dark .cm-hover-highlight {
+    background-color: rgba(99, 130, 240, 0.18);
+    box-shadow: inset 3px 0 0 0 rgb(99, 130, 240);
+  }
+
+  /* ── Logo colors per theme ─────────────────────────────────────── */
+  .logo-edge-static { stroke: #374151; }
+  .logo-edge-brand  { stroke: #3b5bdb; }
+  .logo-edge-dashed { stroke: #9ca3af; }
+  .logo-node-dark   { fill: #111827; }
+  .logo-node-brand  { fill: #3b5bdb; }
+  .logo-ring        { stroke: #3b5bdb; }
+  .logo-text-dark   { fill: #111827; }
+
+  html.dark .logo-edge-static { stroke: #d4d4d8; }
+  html.dark .logo-edge-dashed { stroke: #71717a; }
+  html.dark .logo-node-dark   { fill: #fafafa; }
+  html.dark .logo-text-dark   { fill: #fafafa; }
+
+  /* Logo pulse animation when generating */
+  .logo-active .logo-pulse-1 { animation: logo-pulse 1.4s ease-in-out infinite; animation-delay: 0s; }
+  .logo-active .logo-pulse-2 { animation: logo-pulse 1.4s ease-in-out infinite; animation-delay: .2s; }
+  .logo-active .logo-pulse-3 { animation: logo-pulse 1.4s ease-in-out infinite; animation-delay: .4s; }
+  .logo-active .logo-ring    { animation: logo-spin 2s linear infinite; transform-origin: 68px 35px; }
+
+  @keyframes logo-pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.18); }
+  }
+  @keyframes logo-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* CodeMirror visual polish */
+  .cm-editor.cm-focused {
+    outline: none !important;
+  }
+  .cm-editor {
+    font-size: 0.78rem;
+    background: transparent !important;
+  }
+  .cm-gutters {
+    background: transparent !important;
+    border-right: 1px solid rgba(0,0,0,0.06) !important;
+  }
+  html.dark .cm-gutters {
+    border-right-color: rgba(255,255,255,0.08) !important;
+  }
+
+  /* Cap editor height at ~25 lines and make it scrollable beyond */
+  .turtle-editor .cm-scroller {
+    max-height: 25lh;
+    overflow-y: auto;
+  }
+
+  /* Empty state: keep the editor a uniform surface — suppress the grey
+     active-line band that otherwise stripes the placeholder line in both
+     themes, and give the placeholder a clean, intentional look. */
+  .turtle-editor-empty .cm-activeLine,
+  .turtle-editor-empty .cm-activeLineGutter,
+  .turtle-editor:has(.cm-placeholder) .cm-activeLine,
+  .turtle-editor:has(.cm-placeholder) .cm-activeLineGutter {
+    background-color: transparent !important;
+  }
+  .turtle-editor .cm-placeholder {
+    color: #a1a1aa;            /* zinc-400 */
+    font-style: italic;
+  }
+  html.dark .turtle-editor .cm-placeholder {
+    color: #52525b;            /* zinc-600 */
+  }
+
+  /* Reserve room at the top so the overlay toolbar never sits on line 1.
+     Padding the scroller (not the content) keeps the gutter + code aligned. */
+  .turtle-editor-toolbar .cm-scroller {
+    padding-top: 2.75rem;
+  }
+  /* …and a little breathing room above the bottom token/char counter. */
+  .turtle-editor .cm-scroller {
+    padding-bottom: 1.75rem;
+  }
+
+  /* Markdown editor (output edit mode) — same typography as the rendered output */
+  .markdown-editor .cm-editor {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 0.875rem !important;   /* text-sm — matches .explanation-body */
+    line-height: 1.625 !important;    /* leading-relaxed */
+  }
+  .markdown-editor .cm-content {
+    padding: 4px;
+  }
+  .markdown-editor .cm-scroller {
+    max-height: 25lh;
+    overflow-y: auto;
+  }
+
+  /* Error-line highlight in the Turtle editor */
+  .turtle-editor .cm-line.cm-error-line {
+    background-color: rgba(220, 38, 38, 0.12);
+    box-shadow: inset 3px 0 0 0 rgb(220, 38, 38);
+  }
+  html.dark .turtle-editor .cm-line.cm-error-line {
+    background-color: rgba(248, 113, 113, 0.18);
+    box-shadow: inset 3px 0 0 0 rgb(248, 113, 113);
+  }
+  /* Also highlight the line-number gutter for the error line */
+  .turtle-editor .cm-gutterElement.cm-error-line,
+  .turtle-editor .cm-lineNumbers .cm-gutterElement.cm-activeLineGutter.cm-error-line {
+    color: rgb(220, 38, 38);
+    font-weight: 700;
+  }
+
+  /* ── "Thinking" loading animation ─────────────────────────────── */
+  .thinking-node {
+    fill: currentColor;
+    fill-opacity: 0.35;
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: thinking-pulse 1.6s ease-in-out infinite;
+  }
+  .thinking-node-1 { animation-delay: 0s; }
+  .thinking-node-2 { animation-delay: 0.18s; }
+  .thinking-node-3 { animation-delay: 0.36s; }
+  .thinking-node-4 { animation-delay: 0.54s; }
+
+  .thinking-edge {
+    stroke: currentColor;
+    stroke-opacity: 0.45;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 4 4;
+    animation: thinking-flow 1.2s linear infinite;
+  }
+  .thinking-edge-1 { animation-delay: 0s; }
+  .thinking-edge-2 { animation-delay: 0.15s; }
+  .thinking-edge-3 { animation-delay: 0.30s; }
+  .thinking-edge-4 { animation-delay: 0.45s; }
+
+  .thinking-halo {
+    transform-origin: 140px 40px;
+    animation: thinking-spin 3s linear infinite, thinking-halo-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes thinking-pulse {
+    0%, 100% {
+      transform: scale(1);
+      fill-opacity: 0.35;
+    }
+    50% {
+      transform: scale(1.35);
+      fill-opacity: 1;
+    }
+  }
+  @keyframes thinking-flow {
+    to { stroke-dashoffset: -16; }
+  }
+  @keyframes thinking-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes thinking-halo-pulse {
+    0%, 100% { stroke-opacity: 0.25; }
+    50%      { stroke-opacity: 0.7; }
+  }
+
+  .thinking-message {
+    animation: thinking-message-in 0.4s ease-out;
+  }
+  @keyframes thinking-message-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .thinking-dots {
+    display: inline-block;
+    animation: thinking-dots-blink 1.4s steps(4, end) infinite;
+  }
+  @keyframes thinking-dots-blink {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Top sweep bar */
+  .loading-sweep {
+    animation: loading-sweep 1.8s ease-in-out infinite;
+  }
+  @keyframes loading-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  /* Compare: chip enter + column skeleton pulse */
+  .chip-in {
+    animation: chip-in 0.18s ease-out;
+  }
+  @keyframes chip-in {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .loading-pulse {
+    animation: loading-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes loading-pulse {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 1; }
+  }
+
+  /* Staggered entrance for metric cards / compare columns */
+  .reveal-up {
+    animation: reveal-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes reveal-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-up, .chip-in { animation: none; }
+  }
+}
+
+/* ── Scrollbars ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; background-clip: content-box; }
+html.dark ::-webkit-scrollbar-thumb { background: #3f3f46; background-clip: content-box; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #52525b; background-clip: content-box; }
+
+/* Radix hides the Select viewport's scrollbar (it sets both `scrollbar-width:
+   none` and a `::-webkit-scrollbar { display: none }` rule) because it ships
+   chevron scroll buttons instead. With ~20 models the scrollbar is the better
+   affordance — it shows at a glance that the list runs on and how far down you
+   are — so opt back in and inherit the thumb styling above. Both of Radix's
+   rules are injected at runtime, hence `!important`.
+
+   `scrollbar-width` must be `auto`, not `thin`: any non-auto value makes
+   Chrome fall back to its own scrollbar and ignore the ::-webkit-scrollbar
+   styling above, which renders a zero-width overlay bar that fades out when
+   idle — i.e. no visible scrollbar at all. */
+[data-radix-select-viewport] { scrollbar-width: auto !important; }
+[data-radix-select-viewport]::-webkit-scrollbar { display: block !important; }

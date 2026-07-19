@@ -1,0 +1,42 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:BookShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Book ;
+    sh:property [
+        sh:path ex:title ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:author ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:publishedYear ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 1000 ;
+        sh:maxInclusive 2100 ;
+    ] ;
+    sh:property [
+        sh:path ex:isbn ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9]{3}-[0-9]-[0-9]{2}-[0-9]{6}-[0-9]$" ;
+    ] ;
+    sh:property [
+        sh:path ex:language ;
+        sh:in ( "en" "de" "fr" "es" ) ;
+    ] .
+
+
+
+
+# - minCount / maxCount (genau ein Titel)
+# - nodeKind (Autor muss eine URI sein, kein String)
+# - minInclusive / maxInclusive (Jahreszahl-Range)
+# - pattern (Regex für ISBN) -->
+# - sh:in (Sprache aus fester Liste)

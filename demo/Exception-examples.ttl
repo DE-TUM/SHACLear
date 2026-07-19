@@ -1,0 +1,110 @@
+################################################################################
+# SHACL → NL — Exception Examples
+#
+# Paste any single block (between the ── lines) into the editor to trigger the
+# corresponding error. Each block lists the line that should be highlighted
+# and the toast message you should see.
+################################################################################
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# EXAMPLE 1 — Missing semicolon  ;
+#
+# Expected line highlighted : 10
+# Expected toast title      : "Missing terminator at end of line 10"
+# Expected toast description: "Expected ';' or '.'. Common fix: add the
+#                              missing terminator (`;` between rules, `]` to
+#                              close a block, or `.` to end the statement)."
+# ──────────────────────────────────────────────────────────────────────────────
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Person ;
+    sh:property [
+        sh:path ex:age ;
+        sh:datatype xsd:integer
+        sh:minInclusive 0 ;
+    ] .
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# EXAMPLE 2 — Undefined prefix  ex:
+#
+# Expected line highlighted : 4
+# Expected toast title      : "Undefined prefix 'ex:'"
+# Expected toast description: "Add @prefix ex: <...> . at the top of the file."
+# ──────────────────────────────────────────────────────────────────────────────
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:CarShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Car ;
+    sh:property [
+        sh:path ex:model ;
+        sh:datatype xsd:string ;
+    ] .
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# EXAMPLE 3 — Unclosed bracket  [
+#
+# Expected line highlighted : 8
+# Expected toast title      : "Unclosed '[' starting on line 8"
+# Expected toast description: "Missing closing ']' for block on line 8"
+# ──────────────────────────────────────────────────────────────────────────────
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:OrderShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Order ;
+    sh:property [
+        sh:path ex:total ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+    .
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# EXAMPLE 4 — Stray closing bracket  ]
+#
+# Expected line highlighted : 8
+# Expected toast title      : "Unexpected ']' on line 8 — no matching '['"
+# ──────────────────────────────────────────────────────────────────────────────
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:UserShape
+    a sh:NodeShape ;
+    sh:targetClass ex:User ;
+    sh:property
+        sh:path ex:email ;
+        sh:datatype xsd:string ;
+    ] .
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# EXAMPLE 5 — Backend / SHACL structural error
+# (Turtle is valid, but the structure isn't a valid SHACL shape:
+#  sh:datatype must be an IRI, not a string literal)
+#
+# Expected toast title      : "Valid Turtle, but not a valid SHACL shape"
+# Expected toast description: "The syntax parses, but the document does not
+#                              define a valid SHACL shape."
+# ──────────────────────────────────────────────────────────────────────────────
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix ex:   <http://example.org/> .
+
+ex:ProductShape
+    a sh:NodeShape ;
+    sh:targetClass ex:Product ;
+    sh:property [
+        sh:path ex:name ;
+        sh:datatype "not-an-iri" ;
+    ] .
