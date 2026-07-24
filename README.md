@@ -1,8 +1,7 @@
-# SHACL to Natural Language Interface — Demo Build
+# SHACLear — Demo Build
 
 A web application that translates SHACL constraint shapes into natural
-language explanations using LLMs. Developed as part of the BPC Data
-Engineering course at TUM (SS 2026).
+language explanations using LLMs. 
 
 The frontend is a React/TypeScript SPA built with Vite. The backend is a
 FastAPI service that wraps the SHACL parsing logic and the OpenRouter
@@ -10,7 +9,6 @@ LLM client.
 
 ## Live Demo
 
-<https://purl.archive.org/shacl2nl>
 <http://shacl2nl-env.eba-gmtwkajc.eu-north-1.elasticbeanstalk.com/>
 
 ## Features
